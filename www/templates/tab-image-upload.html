@@ -1,0 +1,24 @@
+<ion-view view-title="Upload">
+  <ion-nav-bar class="bar-positive">
+    <ion-nav-back-button></ion-nav-back-button>
+  </ion-nav-bar>
+  <ion-content>
+
+    <div class="list">
+      <label class="item item-input">
+        <span class="input-label">Student ID</span>
+        <input type="text">
+      </label>
+    </div>
+
+    <div class="photo-holder">
+      <img ng-src="imageSrc" class="full-image" ng-if="imageSrc">
+      <img ng-src="img/placeholder.jpg" class="full-image" ng-if="!imageSrc">
+    </div>
+
+    <div class="padding-horizontal">
+      <button class="button button-positive button-block" ng-click="openLibrary();">Choose Photo</button>
+    </div>
+
+  </ion-content>
+</ion-view>
