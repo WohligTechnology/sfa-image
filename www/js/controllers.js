@@ -1,6 +1,7 @@
 angular.module('starter.controllers', ['ngCordova'])
 
 .controller('ImageUploadCtrl', function ($scope, $cordovaCamera, $timeout, $ionicPopup) {
+
   $scope.openLibrary = function () {
     var libraryOptions = {
       quality: 90,
