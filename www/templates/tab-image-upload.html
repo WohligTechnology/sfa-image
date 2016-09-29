@@ -1,6 +1,9 @@
 <ion-view view-title="Upload">
   <ion-nav-bar class="bar-positive">
     <ion-nav-back-button></ion-nav-back-button>
+    <ion-nav-buttons side="right">
+      <button class="button icon ion-camera" ng-click="openLibrary();">      </button>
+    </ion-nav-buttons>
   </ion-nav-bar>
   <ion-content>
 
@@ -17,7 +20,7 @@
     </div>
 
     <div class="padding-horizontal">
-      <button class="button button-positive button-block" ng-click="openLibrary();">Choose Photo</button>
+      <button class="button button-positive button-block" ng-click="uploadSuccess();">Submit</button>
     </div>
 
   </ion-content>
