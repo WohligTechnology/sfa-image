@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','imageupload'])
 
 .run(function ($ionicPlatform) {
   $ionicPlatform.ready(function () {
@@ -59,4 +59,125 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/image-upload');
 
+})
+.filter('uploadpath', function() {
+    return function(input, width, height, style) {
+        var other = "";
+        if (width && width !== "") {
+            other += "&width=" + width;
+        }
+        if (height && height !== "") {
+            other += "&height=" + height;
+        }
+        if (style && style !== "") {
+            other += "&style=" + style;
+        }
+        if (input) {
+            if (input.indexOf('https://') == -1) {
+                return uploadurl + "readFile?file=" + input + other;
+            } else {
+                return input;
+            }
+        }
+    };
+})
+.directive('imageonload', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.bind('load', function() {
+                scope.$apply(attrs.imageonload);
+            });
+        }
+    };
+})
+.directive('uploadImage', function($http, $filter) {
+    return {
+        templateUrl: 'templates/directive/uploadFile.html',
+        scope: {
+            model: '=ngModel',
+            callback: "=ngCallback",
+            uploadurl: "=uploadhere",
+            state:"=currentState"
+        },
+        link: function($scope, element, attrs) {
+          console.log("here");
+            $scope.showImage = function() {
+                console.log($scope.image);
+            };
+
+            if($scope.uploadurl){
+              uploadurl = $scope.uploadurl;
+            }
+            $scope.isMultiple = false;
+            $scope.inObject = false;
+            if (attrs.multiple || attrs.multiple === "") {
+                $scope.isMultiple = true;
+                $("#inputImage").attr("multiple", "ADD");
+            }
+            if (attrs.noView || attrs.noView === "") {
+                $scope.noShow = true;
+            }
+
+            $scope.$watch("image", function(newVal, oldVal) {
+                if (newVal && newVal.file) {
+                  console.log("here image");
+
+                    $scope.uploadNow(newVal);
+                }
+            });
+
+            if ($scope.model) {
+                if (_.isArray($scope.model)) {
+                    $scope.image = [];
+                    _.each($scope.model, function(n) {
+                        $scope.image.push({
+                            url: n
+                        });
+                    });
+                }
+
+            }
+            if (attrs.inobj || attrs.inobj === "") {
+                $scope.inObject = true;
+            }
+            $scope.clearOld = function() {
+                $scope.model = [];
+            };
+            $scope.uploadNow = function(image) {
+                $scope.uploadStatus = "uploading";
+
+                var Template = this;
+                image.hide = true;
+                var formData = new FormData();
+                formData.append('file', image.file, image.name);
+                $http.post(uploadurl, formData, {
+                    headers: {
+                        'Content-Type': undefined
+                    },
+                    transformRequest: angular.identity
+                }).success(function(data) {
+                    if ($scope.callback) {
+                        $scope.callback(data);
+                    } else {
+                        $scope.uploadStatus = "uploaded";
+                        if ($scope.isMultiple) {
+                            if ($scope.inObject) {
+                                $scope.model.push({
+                                    "image": data.data[0]
+                                });
+                            } else {
+                                $scope.model.push(data.data[0]);
+                            }
+                        } else {
+                            $scope.model = data.data[0];
+                        }
+                        if($scope.state){
+                          $scope.state.reload();
+                        }
+                    }
+                });
+            };
+        }
+    };
 });

@@ -1,27 +1,32 @@
 <ion-view view-title="Upload">
+
   <ion-nav-bar class="bar-positive">
     <ion-nav-back-button></ion-nav-back-button>
     <ion-nav-buttons side="right">
-      <button class="button icon ion-camera" ng-click="openLibrary();">      </button>
+      <!-- <button class="button icon ion-camera" ng-click="openLibrary();">      </button> -->
+      <!-- <button class="button icon ion-camera">      </button> -->
+      <upload-image ng-model="student.profilePic" no-view></upload-image>
+
     </ion-nav-buttons>
   </ion-nav-bar>
   <ion-content>
-
+<form name="profileForm" ng-submit="uploadSuccess();" >
     <div class="list">
       <label class="item item-input">
-        <span class="input-label">Student ID</span>
-        <input type="text">
+        <span class="input-label" ng-class="{'assertive':profileForm.sfaid.$touched && profileForm.sfaid.$invalid}">Student SFAID</span>
+        <input name="sfaid" required type="text" ng-model="student.sfaid">
       </label>
     </div>
 
     <div class="photo-holder">
-      <img ng-src="{{imageSrc}}" class="full-image" ng-if="imageSrc">
-      <img ng-src="img/placeholder.jpg" class="full-image" ng-if="!imageSrc">
+      <img ng-src="{{student.profilePic | uploadpath}}" class="full-image" ng-if="student.profilePic">
+      <img ng-src="img/placeholder.jpg" class="full-image" ng-if="!student.profilePic">
     </div>
 
     <div class="padding-horizontal">
-      <button class="button button-positive button-block" ng-click="uploadSuccess();">Submit</button>
+      <button type="submit" class="button button-positive button-block" >Submit</button>
     </div>
-
+</form>
   </ion-content>
+
 </ion-view>
